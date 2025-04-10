@@ -1,0 +1,219 @@
+{% extends 'gestion_estudiantes/base.html' %}
+
+{% block title %}{{ grado.nombre }} - Detalles{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ grado.nombre }}</h2>
+        <p class="lead">{{ grado.descripcion }}</p>
+        <div class="btn-group" role="group">
+            <a href="{% url 'grado-list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <a href="{% url 'grado-update' grado.pk %}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a href="{% url 'grado-delete' grado.pk %}" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Eliminar
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Información General</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><strong>Duración:</strong> {{ grado.duracion }} semestres</li>
+                        <li><strong>Fecha de creación:</strong> {{ grado.fecha_creacion|date:"d/m/Y" }}</li>
+                        <li><strong>Total de cursos:</strong> {{ grado.cursos.count }}</li>
+                        <li><strong>Total de estudiantes:</strong> {{ grado.estudiantes.count }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Cursos</h5>
+                    <a href="{% url 'curso-create' grado.pk %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Agregar Curso
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% regroup cursos by semestre as cursos_por_semestre %}
+                    {% if cursos_por_semestre %}
+                        <div class="accordion" id="accordionCursos">
+                            {% for semestre in cursos_por_semestre %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#semestre{{ semestre.grouper }}">
+                                        Semestre {{ semestre.grouper }} ({{ semestre.list|length }} cursos)
+                                    </button>
+                                </h2>
+                                <div id="semestre{{ semestre.grouper }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Código</th>
+                                                        <th>Nombre</th>
+                                                        <th>Créditos</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for curso in semestre.list %}
+                                                    <tr>
+                                                        <td>{{ curso.codigo }}</td>
+                                                        <td>{{ curso.nombre }}</td>
+                                                        <td>{{ curso.creditos }}</td>
+                                                        <td>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <a href="{% url 'curso-update' curso.pk %}" class="btn btn-warning">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </a>
+                                                                <a href="{% url 'curso-delete' curso.pk %}" class="btn btn-danger">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No hay cursos registrados para este grado.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Estudiantes Matriculados</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Situación</th>
+                                    <th>Fecha de Registro</th>
+                                    <th>Cursos y Notas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estudiante in grado.estudiantes.all %}
+                                <tr>
+                                    <td>{{ estudiante.nombre }}</td>
+                                    <td>
+                                        <span class="badge {% if estudiante.situacion == 'Activo' %}bg-success{% else %}bg-warning{% endif %}">
+                                            {{ estudiante.situacion }}
+                                        </span>
+                                    </td>
+                                    <td>{{ estudiante.fecha_registro|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#cursos-{{ estudiante.pk }}" aria-expanded="false">
+                                            Ver Cursos ({{ estudiante.cursos.count }})
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'asignar-curso' estudiante.pk %}" class="btn btn-primary">
+                                                <i class="fas fa-plus"></i> Asignar Curso
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="p-0">
+                                        <div class="collapse" id="cursos-{{ estudiante.pk }}">
+                                            <div class="card card-body m-2">
+                                                {% if estudiante.cursos.all %}
+                                                    <table class="table table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Curso</th>
+                                                                <th>Código</th>
+                                                                <th>Créditos</th>
+                                                                <th>Semestre</th>
+                                                                <th>Nota</th>
+                                                                <th>Acciones</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for curso in estudiante.cursos.all %}
+                                                            <tr>
+                                                                <td>{{ curso.nombre }}</td>
+                                                                <td>{{ curso.codigo }}</td>
+                                                                <td>{{ curso.creditos }}</td>
+                                                                <td>{{ curso.semestre }}</td>
+                                                                <td>
+                                                                    {% with nota=curso.notas.filter.first %}
+                                                                        {% if nota %}
+                                                                            {{ nota.nota }}
+                                                                        {% else %}
+                                                                            Sin nota
+                                                                        {% endif %}
+                                                                    {% endwith %}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        {% with nota=curso.notas.filter.first %}
+                                                                            {% if nota %}
+                                                                                <a href="{% url 'nota-update' nota.pk %}" class="btn btn-warning">
+                                                                                    <i class="fas fa-edit"></i>
+                                                                                </a>
+                                                                                <a href="{% url 'nota-delete' nota.pk %}" class="btn btn-danger">
+                                                                                    <i class="fas fa-trash"></i>
+                                                                                </a>
+                                                                            {% else %}
+                                                                                <a href="{% url 'nota-create' estudiante.pk curso.pk %}" class="btn btn-success">
+                                                                                    <i class="fas fa-plus"></i> Agregar Nota
+                                                                                </a>
+                                                                            {% endif %}
+                                                                        {% endwith %}
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                {% else %}
+                                                    <p class="mb-0">No hay cursos asignados.</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No hay estudiantes matriculados en este grado.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

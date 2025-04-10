@@ -1,0 +1,28 @@
+{% extends 'gestion_estudiantes/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Asignar Curso a {{ estudiante.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Asignar Curso a {{ estudiante.nombre }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'asignar-curso' estudiante.pk %}">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-flex justify-content-end mt-3">
+                            <a href="{% url 'estudiante-detail' estudiante.pk %}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

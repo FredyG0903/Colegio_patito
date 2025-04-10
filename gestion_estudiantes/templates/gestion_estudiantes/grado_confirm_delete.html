@@ -1,0 +1,36 @@
+{% extends 'gestion_estudiantes/base.html' %}
+
+{% block title %}Eliminar Grado - {{ grado.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">Confirmar Eliminación</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">¿Estás seguro de que deseas eliminar el grado "{{ grado.nombre }}"?</p>
+                    <p>Esta acción eliminará:</p>
+                    <ul>
+                        <li>Todos los cursos asociados ({{ grado.cursos.count }} cursos)</li>
+                        <li>La asociación con {{ grado.estudiantes.count }} estudiantes</li>
+                    </ul>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'grado-list' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Confirmar Eliminación
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

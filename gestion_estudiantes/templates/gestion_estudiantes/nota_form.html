@@ -1,0 +1,44 @@
+{% extends 'gestion_estudiantes/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if is_update %}
+        Editar Nota - {{ estudiante.nombre }} - {{ curso.nombre }}
+    {% else %}
+        Registrar Nota - {{ estudiante.nombre }} - {{ curso.nombre }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        {% if is_update %}
+                            Editar Nota
+                        {% else %}
+                            Registrar Nota
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Estudiante: {{ estudiante.nombre }}</h6>
+                        <h6>Curso: {{ curso.nombre }} ({{ curso.codigo }})</h6>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-flex justify-content-end mt-3">
+                            <a href="{% url 'estudiante-detail' estudiante.pk %}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

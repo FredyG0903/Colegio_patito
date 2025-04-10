@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Configuración básica del documento -->
+    <meta charset="UTF-8"> <!-- Define la codificación de caracteres -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Hace que la página sea responsive -->
+    <title>Colegio El Patito</title>
+    {% load static %}
+    <!-- Enlaces a hojas de estilo externas -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Framework CSS Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> <!-- Biblioteca de iconos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> <!-- Fuente Roboto -->
+
+    <style>
+        /* Estilos para el cuerpo para compensar el navbar fijo */
+        body {
+            padding-top: 86px; /* Ajusta este valor si la altura del navbar cambia (70px + 1rem padding) */
+        }
+
+        /* Estilos para la barra de navegación */
+        .navbar {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave para efecto de elevación */
+            position: fixed; /* Fija el menú en la pantalla */
+            top: 15px; /* Pega el menú a la parte superior */
+            left: 15px; /* Pega el menú a la izquierda */
+            right: 15px; /* Pega el menú a la derecha */
+            /* width: 100%; */ /* Eliminado para permitir que left y right controlen el ancho */
+            z-index: 1000; /* Asegura que el menú esté por encima de otros elementos */
+            min-height: 70px; /* Altura mínima del menú */
+            padding: 0.5rem 1rem; /* Espaciado interno */
+            background: linear-gradient(135deg, #2c3e50, #3498db) !important; /* Fondo con degradado (mantenido) */
+            font-family: 'Roboto', sans-serif; /* Aplica la fuente Roboto al menú */
+        }
+
+        /* Contenedor principal del menú */
+        .navbar .container {
+            max-width: 1200px; /* Ancho máximo del contenedor */
+            margin: 0 auto; /* Centra el contenedor */
+            padding: 0 2rem; /* Agrega espacio a los lados */
+        }
+
+        /* Contenedor principal del contenido */
+        .main-container {
+            max-width: 1200px; /* Ancho máximo del contenedor */
+            margin: 2rem auto; /* Centra el contenedor y agrega margen exterior */
+            padding: 0 2rem; /* Agrega espacio a los lados */
+        }
+
+        /* Estilos para el logo y título */
+        .navbar-brand {
+            font-weight: 700; /* Texto en negrita (Roboto Bold) */
+            transition: all 0.3s ease; /* Transición suave para efectos */
+            font-size: 1.5rem; /* Tamaño del texto */
+            padding: 0.5rem 0; /* Espaciado vertical */
+            color: #ffffff !important; /* Color del texto (mantenido) */
+            font-family: 'Roboto', sans-serif; /* Aplica la fuente Roboto */
+        }
+
+        /* Efecto hover para el logo */
+        .navbar-brand:hover {
+            transform: translateY(-2px); /* Efecto de elevación */
+            color: #ecf0f1 !important; /* Cambio de color al pasar el mouse (mantenido) */
+        }
+
+        /* Estilos generales para los enlaces del menú */
+        .navbar-nav .nav-link {
+            color: #ecf0f1; /* Color del texto (mantenido) */
+            transition: all 0.3s ease; /* Transición suave */
+            padding: 0.8rem 1.2rem; /* Espaciado interno */
+            border-radius: 4px; /* Bordes redondeados */
+            position: relative; /* Posicionamiento para efectos */
+            margin: 0 5px; /* Margen entre elementos */
+            font-size: 1.1rem; /* Tamaño del texto */
+            font-family: 'Roboto', sans-serif; /* Aplica la fuente Roboto */
+            font-weight: 500; /* Peso medio (Roboto Medium) */
+            background-color: transparent; /* Asegura fondo transparente por defecto */
+            border: none; /* Sin borde por defecto */
+        }
+        
+        /* Efecto hover para los enlaces */
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15); /* Fondo semi-transparente (restaurado) */
+            color: #ffffff; /* Color del texto al hover (mantenido) */
+            transform: translateY(-3px); /* Efecto de elevación (restaurado) */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra al hover (restaurada) */
+        }
+
+        /* Estilo para el enlace activo */
+        .navbar-nav .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2); /* Fondo más oscuro (restaurado) */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra (restaurada) */
+            color: #ffffff; /* Color del texto (mantenido) */
+        }
+
+        /* Estilos para los iconos */
+        .navbar-nav .nav-link i {
+            margin-right: 8px; 
+            transition: transform 0.3s ease; 
+            font-size: 1.2rem; 
+            color: #ecf0f1; 
+        }
+        .navbar-nav .nav-link:hover i {
+            transform: scale(1.2); /* Efecto de escala (restaurado) */
+            color: #ffffff; 
+        }
+
+        /* Estilos para el botón móvil (sin cambios) */
+        .navbar-toggler {
+            padding: 0.5rem; /* Espaciado interno */
+            margin-right: 1rem; /* Margen derecho */
+            border-color: rgba(255, 255, 255, 0.5); /* Color del borde */
+        }
+
+        /* Personalización del icono del botón móvil */
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Ajustes para dispositivos móviles (sin cambios en padding-top del body) */
+        @media (max-width: 991.98px) {
+            .navbar {
+                min-height: auto; /* Altura automática en móviles */
+            }
+            
+            /* Podríamos ajustar el padding-top del body en móviles si el navbar cambia mucho de altura */
+            /* body { padding-top: 60px; } */
+
+            .navbar-nav .nav-link {
+                padding: 0.5rem 1rem; /* Espaciado reducido en móviles */
+            }
+
+            .navbar .container,
+            .main-container {
+                padding: 0 1rem; /* Menos espacio en móviles */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <!-- Logo y título del sistema -->
+            <a class="navbar-brand" href="{% url 'inicio' %}">
+                <img src="{% static 'images/patito.svg' %}" alt="Logo Colegio El Patito" class="logo">
+                Colegio El Patito
+            </a>
+            
+            <!-- Botón para menú móvil -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Contenedor de los enlaces del menú (restaurado) -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inicio' %}">
+                            <i class="fas fa-home"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'estudiante-list' %}">
+                            <i class="fas fa-user-graduate"></i> Estudiantes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'grado-list' %}">
+                            <i class="fas fa-graduation-cap"></i> Grados
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor principal del contenido -->
+    <div class="container mt-4">
+        <!-- Sistema de mensajes -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Bloque para el contenido específico de cada página -->
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer class="footer mt-5 py-3">
+        <div class="container text-center">
+            <p class="mb-0">© 2024 Colegio El Patito - Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <!-- Script de Bootstrap para funcionalidad -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

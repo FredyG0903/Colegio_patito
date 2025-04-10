@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Cuerpo del patito -->
+    <ellipse cx="100" cy="100" rx="60" ry="40" fill="#FFD700"/>
+    
+    <!-- Cabeza del patito -->
+    <circle cx="140" cy="80" r="30" fill="#FFD700"/>
+    
+    <!-- Pico -->
+    <path d="M170 80 Q180 80 180 90 Q180 100 170 100" fill="#FFA07A"/>
+    
+    <!-- Ojo -->
+    <circle cx="150" cy="75" r="5" fill="#2C3E50"/>
+    
+    <!-- Alas -->
+    <path d="M80 90 Q60 70 40 90 Q60 110 80 90" fill="#87CEEB"/>
+    <path d="M120 90 Q140 70 160 90 Q140 110 120 90" fill="#87CEEB"/>
+    
+    <!-- Patas -->
+    <path d="M90 140 Q100 160 110 140" stroke="#FFA07A" stroke-width="5" fill="none"/>
+    <path d="M110 140 Q120 160 130 140" stroke="#FFA07A" stroke-width="5" fill="none"/>
+</svg> 

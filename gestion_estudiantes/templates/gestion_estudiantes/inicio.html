@@ -1,0 +1,100 @@
+{% extends 'gestion_estudiantes/base.html' %}
+
+{% block title %}Inicio - Sistema Universitario{% endblock %}
+
+{% block content %}
+<div class="welcome-section">
+    <h1>¡Bienvenidos al Colegio El Patito!</h1>
+    <p>Donde cada estudiante es especial y único</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-user-graduate fa-3x mb-3" style="color: var(--color-secondary);"></i>
+                <h3>{{ total_estudiantes }}</h3>
+                <p class="card-text">Estudiantes en total</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-check-circle fa-3x mb-3" style="color: var(--color-primary);"></i>
+                <h3>{{ estudiantes_activos }}</h3>
+                <p class="card-text">Estudiantes activos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-book fa-3x mb-3" style="color: var(--color-accent);"></i>
+                <h3>{{ total_grados }}</h3>
+                <p class="card-text">Grados disponibles</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header" style="background-color: var(--color-primary);">
+                <h4 class="mb-0">Últimos Grados</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for grado in grados %}
+                        <li class="list-group-item">
+                            <i class="fas fa-book me-2"></i>
+                            {{ grado.nombre }}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No hay grados registrados</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header" style="background-color: var(--color-secondary);">
+                <h4 class="mb-0">Últimos Cursos</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for curso in cursos %}
+                        <li class="list-group-item">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            {{ curso.nombre }}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No hay cursos registrados</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>¡Únete a nuestra familia!</h3>
+                <p>En el Colegio El Patito, nos esforzamos por brindar la mejor educación</p>
+                <div class="mt-3">
+                    <a href="{% url 'estudiante-create' %}" class="btn btn-primary me-2">
+                        <i class="fas fa-user-plus"></i> Registrar Estudiante
+                    </a>
+                    <a href="{% url 'grado-create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nuevo Grado
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

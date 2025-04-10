@@ -1,0 +1,86 @@
+{% extends 'gestion_estudiantes/base.html' %}
+
+{% block title %}{{ estudiante.nombre }} - Detalles{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>{{ estudiante.nombre }}</h2>
+            <p class="lead">Estudiante de {{ estudiante.grado.nombre }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Información Personal</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Fecha de Nacimiento:</strong> {{ estudiante.fecha_nacimiento|date:"d/m/Y" }}</li>
+                        <li><strong>Sexo:</strong> {{ estudiante.get_sexo_display }}</li>
+                        <li><strong>Situación:</strong> 
+                            <span class="badge {% if estudiante.situacion == 'Activo' %}bg-success{% else %}bg-warning{% endif %}">
+                                {{ estudiante.situacion }}
+                            </span>
+                        </li>
+                        <li><strong>Fecha de Registro:</strong> {{ estudiante.fecha_registro|date:"d/m/Y H:i" }}</li>
+                        <li><strong>Grado:</strong> {{ estudiante.grado.nombre }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Cursos Asignados</h5>
+                    <a href="{% url 'asignar-curso' estudiante.pk %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Asignar Curso
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if estudiante.cursos.all %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Créditos</th>
+                                        <th>Semestre</th>
+                                        <th>Nota</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for curso in estudiante.cursos.all %}
+                                    <tr>
+                                        <td>{{ curso.codigo }}</td>
+                                        <td>{{ curso.nombre }}</td>
+                                        <td>{{ curso.creditos }}</td>
+                                        <td>{{ curso.semestre }}</td>
+                                        <td>
+                                            {% with nota=curso.notas.filter.first %}
+                                                {% if nota %}
+                                                    {{ nota.nota }}
+                                                {% else %}
+                                                    Sin nota
+                                                {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No hay cursos asignados a este estudiante.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

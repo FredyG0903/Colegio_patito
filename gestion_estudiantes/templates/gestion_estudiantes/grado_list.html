@@ -1,0 +1,53 @@
+{% extends 'gestion_estudiantes/base.html' %}
+
+{% block title %}Grados - Sistema Universitario{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Lista de Grados</h2>
+        <div>
+            <a href="{% url 'grado-create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nuevo Grado
+            </a>
+        </div>
+    </div>
+
+    {% if grados %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for grado in grados %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ grado.nombre }}</h5>
+                    <p class="card-text">{{ grado.descripcion|truncatewords:30 }}</p>
+                    <ul class="list-unstyled">
+                        <li><strong>Duración:</strong> {{ grado.duracion }} años</li>
+                        <li><strong>Cursos:</strong> {{ grado.cursos.count }}</li>
+                        <li><strong>Estudiantes:</strong> {{ grado.estudiantes.count }}</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'grado-detail' grado.pk %}" class="btn btn-info">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a href="{% url 'grado-update' grado.pk %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="{% url 'grado-delete' grado.pk %}" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No hay grados registrados. <a href="{% url 'grado-create' %}">Crear un nuevo grado</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 
