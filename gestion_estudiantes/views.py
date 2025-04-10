@@ -82,6 +82,7 @@ class GradoDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['estudiantes'] = self.object.estudiantes.all()
         context['cursos'] = self.object.cursos.all()
+        context['cursos_por_año'] = self.object.cursos.all().order_by('año')
         return context
 
 class EstudianteListView(ListView):
@@ -92,19 +93,25 @@ class EstudianteListView(ListView):
     def get_queryset(self):
         queryset = Estudiante.objects.all()
         grado_id = self.request.GET.get('grado')
+        estudiante_id = self.request.GET.get('id')
+        
         if grado_id:
             queryset = queryset.filter(grado_id=grado_id)
+        if estudiante_id:
+            queryset = queryset.filter(id_estudiante=estudiante_id)
+        
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['grados'] = Grado.objects.all()
+        context['estudiante_id'] = self.request.GET.get('id', '')
         return context
 
 class EstudianteCreateView(CreateView):
     model = Estudiante
     template_name = 'gestion_estudiantes/estudiante_form.html'
-    fields = ['nombre', 'fecha_nacimiento', 'sexo', 'situacion', 'grado']
+    fields = ['id_estudiante', 'nombre', 'fecha_nacimiento', 'sexo', 'situacion', 'grado']
     success_url = reverse_lazy('estudiante-list')
 
     def form_valid(self, form):
@@ -114,7 +121,7 @@ class EstudianteCreateView(CreateView):
 class EstudianteUpdateView(UpdateView):
     model = Estudiante
     template_name = 'gestion_estudiantes/estudiante_form.html'
-    fields = ['nombre', 'fecha_nacimiento', 'sexo', 'situacion', 'grado']
+    fields = ['id_estudiante', 'nombre', 'fecha_nacimiento', 'sexo', 'situacion', 'grado']
     success_url = reverse_lazy('estudiante-list')
 
     def form_valid(self, form):
@@ -133,7 +140,7 @@ class EstudianteDeleteView(DeleteView):
 class CursoCreateView(CreateView):
     model = Curso
     template_name = 'gestion_estudiantes/curso_form.html'
-    fields = ['nombre', 'codigo', 'creditos', 'semestre']
+    fields = ['nombre', 'codigo', 'creditos', 'año']
 
     def form_valid(self, form):
         grado = get_object_or_404(Grado, pk=self.kwargs['grado_pk'])
@@ -152,7 +159,7 @@ class CursoCreateView(CreateView):
 class CursoUpdateView(UpdateView):
     model = Curso
     template_name = 'gestion_estudiantes/curso_form.html'
-    fields = ['nombre', 'codigo', 'creditos', 'semestre']
+    fields = ['nombre', 'codigo', 'creditos', 'año']
 
     def get_success_url(self):
         return reverse_lazy('grado-detail', kwargs={'pk': self.object.grado.id})
@@ -253,17 +260,43 @@ class NotaCreateView(CreateView):
     def dispatch(self, request, *args, **kwargs):
         self.estudiante = get_object_or_404(Estudiante, pk=kwargs['estudiante_pk'])
         self.curso = get_object_or_404(Curso, pk=kwargs['curso_pk'])
+        if not self.estudiante.id_estudiante:
+            messages.error(request, 'El estudiante no tiene un ID asignado.')
+            return redirect('estudiante-detail', pk=self.estudiante.pk)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['estudiante'] = self.estudiante
         context['curso'] = self.curso
+        # Verificar si ya existe una nota para este estudiante y curso
+        nota_existente = Nota.objects.filter(
+            estudiante_id_form=self.estudiante.id_estudiante,
+            curso_codigo=self.curso.codigo
+        ).first()
+        if nota_existente:
+            context['nota_existente'] = nota_existente
+            messages.warning(self.request, f'Ya existe una nota de {nota_existente.nota} para este estudiante en este curso.')
         return context
 
     def form_valid(self, form):
+        # Verificar si ya existe una nota para este estudiante y curso
+        nota_existente = Nota.objects.filter(
+            estudiante_id_form=self.estudiante.id_estudiante,
+            curso_codigo=self.curso.codigo
+        ).first()
+        
+        if nota_existente:
+            messages.error(self.request, 'Ya existe una nota para este estudiante en este curso.')
+            return self.form_invalid(form)
+            
         form.instance.estudiante = self.estudiante
         form.instance.curso = self.curso
+        form.instance.estudiante_nombre = self.estudiante.nombre
+        form.instance.estudiante_id_form = self.estudiante.id_estudiante
+        form.instance.curso_nombre = self.curso.nombre
+        form.instance.curso_codigo = self.curso.codigo
+        
         messages.success(self.request, 'Nota registrada exitosamente.')
         return super().form_valid(form)
 

@@ -9,8 +9,8 @@ class GradoAdmin(admin.ModelAdmin):
 
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'codigo', 'grado', 'semestre', 'creditos')
-    list_filter = ('grado', 'semestre')
+    list_display = ('nombre', 'codigo', 'grado', 'año', 'creditos')
+    list_filter = ('grado', 'año')
     search_fields = ('nombre', 'codigo')
 
 @admin.register(Estudiante)

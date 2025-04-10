@@ -28,6 +28,11 @@
                         <h6>Estudiante: {{ estudiante.nombre }}</h6>
                         <h6>Curso: {{ curso.nombre }} ({{ curso.codigo }})</h6>
                     </div>
+                    {% if nota_existente %}
+                        <div class="alert alert-warning">
+                            Ya existe una nota para este estudiante en este curso: {{ nota_existente.nota }}
+                        </div>
+                    {% endif %}
                     <form method="post">
                         {% csrf_token %}
                         {{ form|crispy }}

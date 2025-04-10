@@ -1,4 +1,5 @@
 {% extends 'gestion_estudiantes/base.html' %}
+{% load gestion_tags %}
 
 {% block title %}{{ grado.nombre }} - Detalles{% endblock %}
 
@@ -28,7 +29,7 @@
                 </div>
                 <div class="card-body">
                     <ul class="list-unstyled">
-                        <li><strong>Duración:</strong> {{ grado.duracion }} semestres</li>
+                        <li><strong>Duración:</strong> {{ grado.duracion }} años</li>
                         <li><strong>Fecha de creación:</strong> {{ grado.fecha_creacion|date:"d/m/Y" }}</li>
                         <li><strong>Total de cursos:</strong> {{ grado.cursos.count }}</li>
                         <li><strong>Total de estudiantes:</strong> {{ grado.estudiantes.count }}</li>
@@ -46,49 +47,47 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    {% regroup cursos by semestre as cursos_por_semestre %}
-                    {% if cursos_por_semestre %}
+                    {% regroup cursos_por_año by año as cursos_por_año %}
+                    {% if cursos_por_año %}
                         <div class="accordion" id="accordionCursos">
-                            {% for semestre in cursos_por_semestre %}
+                            {% for año in cursos_por_año %}
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#semestre{{ semestre.grouper }}">
-                                        Semestre {{ semestre.grouper }} ({{ semestre.list|length }} cursos)
+                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#año{{ año.grouper }}">
+                                        Año {{ año.grouper }} ({{ año.list|length }} cursos)
                                     </button>
                                 </h2>
-                                <div id="semestre{{ semestre.grouper }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}">
+                                <div id="año{{ año.grouper }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#accordionCursos">
                                     <div class="accordion-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Código</th>
-                                                        <th>Nombre</th>
-                                                        <th>Créditos</th>
-                                                        <th>Acciones</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for curso in semestre.list %}
-                                                    <tr>
-                                                        <td>{{ curso.codigo }}</td>
-                                                        <td>{{ curso.nombre }}</td>
-                                                        <td>{{ curso.creditos }}</td>
-                                                        <td>
-                                                            <div class="btn-group btn-group-sm">
-                                                                <a href="{% url 'curso-update' curso.pk %}" class="btn btn-warning">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </a>
-                                                                <a href="{% url 'curso-delete' curso.pk %}" class="btn btn-danger">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Código</th>
+                                                    <th>Nombre</th>
+                                                    <th>Créditos</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for curso in año.list %}
+                                                <tr>
+                                                    <td>{{ curso.codigo }}</td>
+                                                    <td>{{ curso.nombre }}</td>
+                                                    <td>{{ curso.creditos }}</td>
+                                                    <td>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <a href="{% url 'curso-update' curso.pk %}" class="btn btn-warning">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <a href="{% url 'curso-delete' curso.pk %}" class="btn btn-danger">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -153,7 +152,7 @@
                                                                 <th>Curso</th>
                                                                 <th>Código</th>
                                                                 <th>Créditos</th>
-                                                                <th>Semestre</th>
+                                                                <th>Año</th>
                                                                 <th>Nota</th>
                                                                 <th>Acciones</th>
                                                             </tr>
@@ -164,9 +163,9 @@
                                                                 <td>{{ curso.nombre }}</td>
                                                                 <td>{{ curso.codigo }}</td>
                                                                 <td>{{ curso.creditos }}</td>
-                                                                <td>{{ curso.semestre }}</td>
+                                                                <td>{{ curso.año }}</td>
                                                                 <td>
-                                                                    {% with nota=curso.notas.filter.first %}
+                                                                    {% with nota=curso.notas.all|get_nota_estudiante:estudiante %}
                                                                         {% if nota %}
                                                                             {{ nota.nota }}
                                                                         {% else %}
@@ -176,7 +175,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="btn-group btn-group-sm">
-                                                                        {% with nota=curso.notas.filter.first %}
+                                                                        {% with nota=curso.notas.all|get_nota_estudiante:estudiante %}
                                                                             {% if nota %}
                                                                                 <a href="{% url 'nota-update' nota.pk %}" class="btn btn-warning">
                                                                                     <i class="fas fa-edit"></i>
