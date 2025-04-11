@@ -1,4 +1,5 @@
 {% extends 'gestion_estudiantes/base.html' %}
+{% load gestion_tags %}
 
 {% block title %}{{ estudiante.nombre }} - Detalles{% endblock %}
 
@@ -14,19 +15,17 @@
     <div class="row">
         <div class="col-md-4">
             <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Información Personal</h5>
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title">Información Personal</h5>
-                    <ul class="list-unstyled">
-                        <li><strong>Fecha de Nacimiento:</strong> {{ estudiante.fecha_nacimiento|date:"d/m/Y" }}</li>
-                        <li><strong>Sexo:</strong> {{ estudiante.get_sexo_display }}</li>
-                        <li><strong>Situación:</strong> 
-                            <span class="badge {% if estudiante.situacion == 'Activo' %}bg-success{% else %}bg-warning{% endif %}">
-                                {{ estudiante.situacion }}
-                            </span>
-                        </li>
-                        <li><strong>Fecha de Registro:</strong> {{ estudiante.fecha_registro|date:"d/m/Y H:i" }}</li>
-                        <li><strong>Grado:</strong> {{ estudiante.grado.nombre }}</li>
-                    </ul>
+                    <p><strong>ID Estudiante:</strong> {{ estudiante.id_estudiante }}</p>
+                    <p><strong>Fecha de Nacimiento:</strong> {{ estudiante.fecha_nacimiento }}</p>
+                    <p><strong>Sexo:</strong> {{ estudiante.get_sexo_display }}</p>
+                    <p><strong>Situación:</strong> <span class="badge {% if estudiante.situacion == 'Activo' %}bg-success{% else %}bg-danger{% endif %}">{{ estudiante.situacion }}</span></p>
+                    <p><strong>Fecha de Registro:</strong> {{ estudiante.fecha_registro|date:"d/m/Y H:i" }}</p>
+                    <p><strong>Grado:</strong> {{ estudiante.grado }}</p>
+                    <p><strong>Promedio General:</strong> {{ estudiante.calcular_promedio }}</p>
                 </div>
             </div>
         </div>
@@ -45,20 +44,22 @@
                             <table class="table">
                                 <thead>
                                     <tr>
+                                        <th>Curso</th>
                                         <th>Código</th>
-                                        <th>Nombre</th>
                                         <th>Créditos</th>
+                                        <th>Año</th>
                                         <th>Nota</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for curso in estudiante.cursos.all %}
                                     <tr>
-                                        <td>{{ curso.codigo }}</td>
                                         <td>{{ curso.nombre }}</td>
+                                        <td>{{ curso.codigo }}</td>
                                         <td>{{ curso.creditos }}</td>
+                                        <td>{{ curso.año }}</td>
                                         <td>
-                                            {% with nota=curso.notas.filter.first %}
+                                            {% with nota=curso.notas.all|get_nota_estudiante:estudiante %}
                                                 {% if nota %}
                                                     {{ nota.nota }}
                                                 {% else %}

@@ -38,46 +38,7 @@
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header" style="background-color: var(--color-primary);">
-                <h4 class="mb-0">Últimos Grados</h4>
-            </div>
-            <div class="card-body">
-                <ul class="list-group">
-                    {% for grado in grados %}
-                        <li class="list-group-item">
-                            <i class="fas fa-book me-2"></i>
-                            {{ grado.nombre }}
-                        </li>
-                    {% empty %}
-                        <li class="list-group-item">No hay grados registrados</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header" style="background-color: var(--color-secondary);">
-                <h4 class="mb-0">Últimos Cursos</h4>
-            </div>
-            <div class="card-body">
-                <ul class="list-group">
-                    {% for curso in cursos %}
-                        <li class="list-group-item">
-                            <i class="fas fa-graduation-cap me-2"></i>
-                            {{ curso.nombre }}
-                        </li>
-                    {% empty %}
-                        <li class="list-group-item">No hay cursos registrados</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <div class="row mt-4">
     <div class="col-12">

@@ -33,6 +33,7 @@
                         <li><strong>Fecha de creación:</strong> {{ grado.fecha_creacion|date:"d/m/Y" }}</li>
                         <li><strong>Total de cursos:</strong> {{ grado.cursos.count }}</li>
                         <li><strong>Total de estudiantes:</strong> {{ grado.estudiantes.count }}</li>
+                        <li><strong>Promedio General:</strong> {{ grado.calcular_promedio_general }}</li>
                     </ul>
                 </div>
             </div>
